@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.9.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+sourceSets {
+    main {
+        java { srcDirs = ['src/main/java'] }
+    }
+
+    test {
+        groovy { srcDirs = ['src/test/groovy'] }
+    }
+}
+
+dependencies {
+    compile(
+            [group: "org.springframework.boot", name: "spring-boot-starter-web", version: "1.2.5.RELEASE"],
+            [group: "org.quartz-scheduler", name: "quartz", version: "2.2.1"],
+            [group: "com.amazonaws", name: "aws-java-sdk-s3", version: "1.10.10"],
+            [group: "com.amazonaws", name: "aws-java-sdk-sqs", version: "1.10.10"]
+    )
+    testCompile(
+            [group: "org.springframework.boot", name: "spring-boot-starter-test", version: "1.2.5.RELEASE"]
+    )
+}
