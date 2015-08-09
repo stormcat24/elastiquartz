@@ -6,8 +6,23 @@ machine:
     - docker
 
 dependencies:
+  cache_directories:
+    - "~/docker"
+
+  pre:
+    - |
+      if [[ -e ~/docker/java.tar ]]; then
+        docker load --input ~/docker/java.tar
+      else
+        docker pull java:openjdk-8u45-jdk
+      fi
+
   override:
     - ./gradlew dependencies
+
+  post:
+    - mkdir -p ~/docker
+    - docker save java > ~/docker/java.tar
 
 test:
   override:
