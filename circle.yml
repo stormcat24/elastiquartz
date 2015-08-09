@@ -2,6 +2,9 @@ machine:
   java:
     version: oraclejdk8
 
+  services:
+    - docker
+
 dependencies:
   override:
     - ./gradlew dependencies
@@ -9,4 +12,12 @@ dependencies:
 test:
   override:
     - ./gradlew test
+
+deployment:
+  master:
+    branch: master
+    owner: stormcat24
+    commands:
+      - ./gradlew build
+      - docker build -t stormcat24/elastiquartz:latest .
 
