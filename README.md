@@ -8,6 +8,10 @@ elastiquartz
 
 elastiquartz is cron job schedular on Amazon Web Services(AWS).
 
+### Disclaimer
+
+elastiquartz support only aws currently. Work in progress.
+
 ### Required Environment Variables
 
 elastiquartz requires several environment variables. This can be easily operated as Docker container.
@@ -19,6 +23,8 @@ elastiquartz requires several environment variables. This can be easily operated
 |CRON_TARGET|cron_file|cron definition yml file path. if s3://your_bucket_name/cron_file.yml, you must specify cron_file|
 |EVENT_TARGET_TYPE|sqs|Destination of message|
 |AWS_REGION|us-west-2|your AWS region|
+|AWS_ACCESS_KEY|your_access_key|AWS access key|
+|AWS_SECRET_KEY|your_secret_key|AWS secret key|
 
 ### Cron Definition File(YAML)
 
