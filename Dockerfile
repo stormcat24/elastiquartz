@@ -3,8 +3,16 @@ MAINTAINER stormcat24 <a.yamada24@gmail.com>
 
 RUN apt-get update
 
-COPY build/libs/elastiquartz.jar /usr/local/elastiquartz/lib/
+# build
+COPY . /elastiquartz
+RUN cd /elastiquartz && ./gradlew clean
+RUN cd /elastiquartz && ./gradlew build
+RUN cp -R /elastiquartz/build/libs/elastiquartz.jar /usr/local/elastiquartz/lib/
+RUN rm -rf /elastiquartz
 
 ENTRYPOINT java -jar /usr/local/elastiquartz/lib/elastiquartz.jar
+
+ENV CRON_LOCATION_TYPE="s3" \
+    EVENT_TARGET_TYPE="sqs"
 
 EXPOSE 8080
