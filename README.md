@@ -78,6 +78,25 @@ It will be distributed to SQS as follows.
 }
 ```
 
+### example of docker-compose.yml
+
+As follows.
+
+```Ruby
+batch:
+  image: stormcat24/elastiquartz:latest
+  environment:
+    CRON_LOCATION_TYPE: s3
+    CRON_LOCATION: your_bucket_name
+    CRON_TARGET: cron_file_name
+    EVENT_TARGET_TYPE: sqs
+    AWS_REGION: us-west-2
+    AWS_ACCESS_KEY: your_access_key
+    AWS_SECRET_KEY: your_secret_key
+  volumes:
+    # output /logs/elastiquartz.log in container.
+    - /var/log/elastiquartz:/logs
+```
 
 License
 ===
