@@ -83,7 +83,7 @@ It will be distributed to SQS as follows.
 As follows.
 
 ```Ruby
-batch:
+elastiquartz:
   image: stormcat24/elastiquartz:latest
   environment:
     CRON_LOCATION_TYPE: s3
