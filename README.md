@@ -98,6 +98,11 @@ elastiquartz:
     - /var/log/elastiquartz:/logs
 ```
 
+### TODO
+
+* Support Active/Standby(Hot) for Redundancy
+* Support SNS topic
+
 License
 ===
 See [LICENSE](LICENSE).
