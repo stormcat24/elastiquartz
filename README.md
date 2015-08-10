@@ -42,7 +42,32 @@ sqs001:
 
 ```
 
-Notation of cron expression is the same as [Quartz](http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06).
+Top level element is destination of message. You may specify Amazon SQS queue name.
+
+Then below the top level should be array. Each elements should have `cron` and `message` element. Notation of cron expression is the same as [Quartz](http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06).
+`message` element is you free data. This data you have described here is delivered is converted to JSON.
+
+If written as follows,
+
+```Ruby
+message:
+  job: job2
+  params:
+    param1: value1
+    param2: value2
+```
+
+It will be distributed to SQS as follows.
+
+```JSON
+{
+  "job": "job2",
+  "params": {
+    "param1": "value1",
+    "param2": "value2"
+  }
+}
+```
 
 
 License
