@@ -17,4 +17,5 @@ public class StatusController {
     public String index() {
         return "OK";
     }
+
 }
