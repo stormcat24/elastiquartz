@@ -58,10 +58,13 @@ public class CronCheckTask {
     @Scheduled(fixedRate = 60 * 1000)
     public void check() {
 
+        if (existsExecutingJobs()) {
+            logger.info("Exists executing job now. Skip update cron definition");
+            return;
+        }
+
         Map<String, List<CronDefinition>> cronDefMap = cronProvider.getCronDefinitionMap();
 
-
-        System.out.println(new Yaml().dump(cronDefMap));
         logger.info("Got cron definitions.");
         // TODO CronExpression.isValidExpression
         // TODO if has errors, do not update
@@ -103,6 +106,14 @@ public class CronCheckTask {
             }
         }
 
+    }
+
+    private boolean existsExecutingJobs() {
+        try {
+            return !scheduler.getCurrentlyExecutingJobs().isEmpty();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private CronTrigger createTrigger(CronDefinition cronDef) {
