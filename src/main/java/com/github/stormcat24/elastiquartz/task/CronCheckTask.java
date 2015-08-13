@@ -119,7 +119,7 @@ public class CronCheckTask {
     private CronTrigger createTrigger(CronDefinition cronDef) {
 
         return newTrigger()
-                .withIdentity(configuration.getCronTarget())
+                .withIdentity(String.format("%s_%s", configuration.getCronTarget(), UUID.randomUUID().toString()))
                 .withSchedule(cronSchedule(cronDef.getCron()))
                 .build();
 
