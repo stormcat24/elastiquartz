@@ -98,6 +98,17 @@ elastiquartz:
     - /var/log/elastiquartz:/logs
 ```
 
+### Metrics
+
+Docker container of elastiquartz supports [jolokia](https://jolokia.org/). You can get JVM metrics by HTTP.
+ 
+e.g.
+
+```bash
+$ curl http://localhost:8778/jolokia/read/java.lang:type=Memory/NonHeapMemoryUsage
+{"request":{"mbean":"java.lang:type=Memory","attribute":"NonHeapMemoryUsage","type":"read"},"value":{"init":2555904,"committed":53870592,"max":-1,"used":52402136},"timestamp":1439672040,"status":200}
+```
+
 ### TODO
 
 * Support Active/Standby(Hot) for Redundancy
