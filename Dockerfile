@@ -11,9 +11,13 @@ RUN mkdir -p /usr/local/elastiquartz/lib
 RUN cp -R /elastiquartz/build/libs/elastiquartz.jar /usr/local/elastiquartz/lib/
 RUN rm -rf ~/.gradle
 
-ENTRYPOINT java -jar /usr/local/elastiquartz/lib/elastiquartz.jar
+#jolokia
+COPY jolokia-jvm-1.3.1-agent.jar /usr/local/elastiquartz/lib/
 
-ENV CRON_LOCATION_TYPE="s3" \
-    EVENT_TARGET_TYPE="sqs"
+ENV JAVA_OPTS="$JAVA_OPTS -javaagent:/usr/local/elastiquartz/lib/jolokia-jvm-1.3.1-agent.jar=port=8778,host=0.0.0.0"
+ENV CRON_LOCATION_TYPE="s3"
+ENV EVENT_TARGET_TYPE="sqs"
 
-EXPOSE 8080
+EXPOSE 8080 8778
+
+ENTRYPOINT java $JAVA_OPTS -jar /usr/local/elastiquartz/lib/elastiquartz.jar
