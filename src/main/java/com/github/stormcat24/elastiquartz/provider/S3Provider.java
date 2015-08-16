@@ -1,6 +1,7 @@
 package com.github.stormcat24.elastiquartz.provider;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -40,7 +41,7 @@ public class S3Provider implements CronProvider {
     @PostConstruct
     public void init() {
 
-        AWSCredentials credentials = new EnvironmentVariableCredentialsProvider().getCredentials();
+        AWSCredentials credentials = new DefaultAWSCredentialsProviderChain().getCredentials();
         AmazonS3 s3 = new AmazonS3Client(credentials);
 
         Optional<String> region = Optional.ofNullable(System.getenv("AWS_REGION"));
