@@ -1,6 +1,7 @@
 package com.github.stormcat24.elastiquartz.publisher;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.regions.Region;
@@ -35,7 +36,7 @@ public class SqsMessagePublisher implements MessagePublisher {
 
     @PostConstruct
     public void init() {
-        AWSCredentials credentials = new EnvironmentVariableCredentialsProvider().getCredentials();
+        AWSCredentials credentials = new DefaultAWSCredentialsProviderChain().getCredentials();
         AmazonSQSAsync sqs = new AmazonSQSAsyncClient(credentials);
 
         Optional<String> region = Optional.ofNullable(System.getenv("AWS_REGION"));
