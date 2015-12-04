@@ -63,6 +63,8 @@ public class CronCheckTask {
             return;
         }
 
+        System.out.println("---------");
+        System.out.println(cronProvider.hashCode());
         Map<String, List<CronDefinition>> cronDefMap = cronProvider.getCronDefinitionMap();
 
         logger.info("Got cron definitions.");
