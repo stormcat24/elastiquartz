@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -63,8 +62,6 @@ public class CronCheckTask {
             return;
         }
 
-        System.out.println("---------");
-        System.out.println(cronProvider.hashCode());
         Map<String, List<CronDefinition>> cronDefMap = cronProvider.getCronDefinitionMap();
 
         logger.info("Got cron definitions.");
