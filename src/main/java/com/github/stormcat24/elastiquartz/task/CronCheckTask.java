@@ -9,12 +9,15 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -27,8 +30,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class CronCheckTask {
 
     @Autowired
-    @Qualifier("cronProviderFactory")
-    private CronProvider cronProvider;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private Configuration configuration;
@@ -62,6 +64,7 @@ public class CronCheckTask {
             return;
         }
 
+        CronProvider cronProvider = applicationContext.getBean("cronProviderFactory", CronProvider.class);
         Map<String, List<CronDefinition>> cronDefMap = cronProvider.getCronDefinitionMap();
 
         logger.info("Got cron definitions.");

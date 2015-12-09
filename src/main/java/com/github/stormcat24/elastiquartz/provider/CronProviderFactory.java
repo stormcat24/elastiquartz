@@ -38,6 +38,6 @@ public class CronProviderFactory implements FactoryBean<CronProvider> {
 
     @Override
     public boolean isSingleton() {
-        return true;
+        return false;
     }
 }
