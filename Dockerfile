@@ -1,14 +1,14 @@
-FROM java:openjdk-8u45-jdk
+FROM anapsix/alpine-java:jdk8
 MAINTAINER stormcat24 <a.yamada24@gmail.com>
 
 # build
 COPY . /elastiquartz
-RUN apt-get update && \
-    cd /elastiquartz && ./gradlew clean && \
+RUN cd /elastiquartz && ./gradlew clean && \
     cd /elastiquartz && ./gradlew build && \
     mkdir -p /usr/local/elastiquartz/lib && \
     cp -R /elastiquartz/build/libs/elastiquartz.jar /usr/local/elastiquartz/lib/ && \
-    rm -rf ~/.gradle
+    rm -rf ~/.gradle && \
+    rm -rf /elastiquartz
 
 #jolokia
 COPY jolokia-jvm-1.3.1-agent.jar /usr/local/elastiquartz/lib/

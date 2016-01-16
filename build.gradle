@@ -39,6 +39,7 @@ dependencies {
             [group: "org.quartz-scheduler", name: "quartz", version: "2.2.2"],
             [group: "com.amazonaws", name: "aws-java-sdk-s3", version: "1.10.46"],
             [group: "com.amazonaws", name: "aws-java-sdk-sqs", version: "1.10.46"],
+            [group: "org.aspectj", name: "aspectjweaver", version: "1.8.8"],
             [group: "org.projectlombok", name: "lombok", version: "1.16.4"]
     )
     testCompile(

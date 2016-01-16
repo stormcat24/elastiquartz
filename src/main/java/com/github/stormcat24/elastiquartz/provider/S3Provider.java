@@ -2,28 +2,24 @@ package com.github.stormcat24.elastiquartz.provider;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.S3Object;
 import com.github.stormcat24.elastiquartz.config.Configuration;
+import com.github.stormcat24.elastiquartz.exception.SystemException;
 import com.github.stormcat24.elastiquartz.schema.CronDefinition;
 import com.github.stormcat24.elastiquartz.schema.CronDefinitionReader;
+import com.github.stormcat24.elastiquartz.server.HealthCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.PostConstruct;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * @author stormcat24
@@ -39,6 +35,9 @@ public class S3Provider implements CronProvider {
 
     @Autowired
     private Configuration configuration;
+
+    @Autowired
+    private HealthCheckContext healthCheckContext;
 
     @PostConstruct
     public void init() {
@@ -56,8 +55,16 @@ public class S3Provider implements CronProvider {
     public Map<String, List<CronDefinition>> getCronDefinitionMap() {
 
         String bucketName = configuration.getCronLocation();
-        S3Object s3Obj = s3.getObject(bucketName, String.format("%s.yml", configuration.getCronTarget()));
 
-        return reader.read(s3Obj.getObjectContent());
+        try {
+            S3Object s3Obj = s3.getObject(bucketName, String.format("%s.yml", configuration.getCronTarget()));
+            return reader.read(s3Obj.getObjectContent());
+        } catch (Exception e) {
+            healthCheckContext.incrementError();
+            throw new SystemException(e);
+        } finally {
+            healthCheckContext.incrementSuccess();
+        }
+
     }
 }

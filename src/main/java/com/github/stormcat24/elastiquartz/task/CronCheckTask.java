@@ -1,14 +1,18 @@
 package com.github.stormcat24.elastiquartz.task;
 
 import com.github.stormcat24.elastiquartz.config.Configuration;
+import com.github.stormcat24.elastiquartz.exception.SystemException;
+import com.github.stormcat24.elastiquartz.quartz.MessagePublishJob;
 import com.github.stormcat24.elastiquartz.provider.CronProvider;
 import com.github.stormcat24.elastiquartz.schema.CronDefinition;
+import com.github.stormcat24.elastiquartz.server.QuartzJobFactory;
+import lombok.SneakyThrows;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,7 +20,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -36,7 +39,7 @@ public class CronCheckTask {
     private Configuration configuration;
 
     @Autowired
-    private TaskFactory taskFactory;
+    private QuartzJobFactory quartzJobFactory;
 
     private Scheduler scheduler;
 
@@ -48,15 +51,16 @@ public class CronCheckTask {
     public void init() {
         try {
             scheduler = StdSchedulerFactory.getDefaultScheduler();
-            scheduler.setJobFactory(taskFactory);
+            scheduler.setJobFactory(quartzJobFactory);
             scheduler.start();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SystemException(e);
         }
     }
 
     // check every minutes
     @Scheduled(fixedRate = 60 * 1000)
+    @SneakyThrows
     public void check() {
 
         if (existsExecutingJobs()) {
@@ -68,30 +72,19 @@ public class CronCheckTask {
         Map<String, List<CronDefinition>> cronDefMap = cronProvider.getCronDefinitionMap();
 
         logger.info("Got cron definitions.");
-        // TODO CronExpression.isValidExpression
-        // TODO if has errors, do not update
         boolean validate = true;
 
         if (!validate) {
-            throw new RuntimeException("validation error");
+            throw new SystemException("validation error");
         }
 
-        try {
-            Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.groupEndsWith(JOB_GROUP));
-
-            for (JobKey key : jobKeys) {
-                System.out.println(key.toString());
-            }
-            scheduler.clear();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to clear current jobs.");
-        }
+        scheduler.clear();
 
         for (Map.Entry<String, List<CronDefinition>> entry : cronDefMap.entrySet()) {
 
             String target = entry.getKey();
             for (CronDefinition cronDef : entry.getValue()) {
-                JobDetail jobDetail = newJob(MessagePublishTask.class)
+                JobDetail jobDetail = newJob(MessagePublishJob.class)
                         .withIdentity(UUID.randomUUID().toString(), JOB_GROUP).build();
 
                 CronTrigger cronTrigger = createTrigger(cronDef);
@@ -100,22 +93,14 @@ public class CronCheckTask {
                 dataMap.put("target", target);
                 dataMap.put("message", cronDef.getMessage());
 
-                try {
-                    scheduler.scheduleJob(jobDetail, cronTrigger);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                scheduler.scheduleJob(jobDetail, cronTrigger);
             }
         }
 
     }
 
-    private boolean existsExecutingJobs() {
-        try {
-            return !scheduler.getCurrentlyExecutingJobs().isEmpty();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private boolean existsExecutingJobs() throws SchedulerException {
+        return !scheduler.getCurrentlyExecutingJobs().isEmpty();
     }
 
     private CronTrigger createTrigger(CronDefinition cronDef) {

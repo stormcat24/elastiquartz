@@ -25,7 +25,10 @@ public class Configuration {
     private String eventTargetType;
 
     @Getter
-    private String primaryHost;
+    private int healthCheckMinutes = 5;
+
+    @Getter
+    private int fatalThresholdPercentage = -1;
 
     @PostConstruct
     public void init() {
@@ -38,11 +41,26 @@ public class Configuration {
         this.cronLocation = System.getenv("CRON_LOCATION");
         this.cronTarget = System.getenv("CRON_TARGET");
         this.eventTargetType = System.getenv("EVENT_TARGET_TYPE");
-        this.primaryHost = System.getenv("PRIMARY_HOST");
-    }
 
-    public boolean isStandbyServer() {
-        return !StringUtils.isEmpty(primaryHost);
+        String rawHealthCheckMinutes = System.getenv("HEALTH_CHECK_MINUTES");
+        if (!StringUtils.isEmpty(rawHealthCheckMinutes)) {
+            int value = Integer.parseInt(rawHealthCheckMinutes);
+            if (value <= 0) {
+                healthCheckMinutes = 1;
+            } else {
+                healthCheckMinutes = value;
+            }
+        }
+
+        String rawFatalThresholdPercentage = System.getenv("FATAL_THRESHOLD_PERCENTAGE");
+        if (!StringUtils.isEmpty(rawFatalThresholdPercentage)) {
+            int value = Integer.parseInt(rawFatalThresholdPercentage);
+            if (value >= 100) {
+                fatalThresholdPercentage = 100;
+            } else {
+                fatalThresholdPercentage = value;
+            }
+        }
     }
 
 }

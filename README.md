@@ -22,6 +22,8 @@ elastiquartz requires several environment variables. This can be easily operated
 |CRON_LOCATION|your_bucket_name|if s3, specify bucket name|
 |CRON_TARGET|cron_file|cron definition yml file path. if s3://your_bucket_name/cron_file.yml, you must specify cron_file|
 |EVENT_TARGET_TYPE|sqs|Destination of message|
+|FATAL_THRESHOLD_PERCENTAGE|-1|If error rate reached this value, process will shutdown.|
+|HEALTH_CHECK_MINUTES|5|Check error rate inlast specified minutes|
 |AWS_REGION|us-west-2|your AWS region|
 |AWS_ACCESS_KEY|your_access_key|AWS access key|
 |AWS_SECRET_KEY|your_secret_key|AWS secret key|
