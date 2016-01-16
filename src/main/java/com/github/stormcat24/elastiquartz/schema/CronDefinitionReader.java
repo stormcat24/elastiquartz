@@ -1,5 +1,6 @@
 package com.github.stormcat24.elastiquartz.schema;
 
+import com.github.stormcat24.elastiquartz.exception.SystemException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
@@ -33,7 +34,7 @@ public class CronDefinitionReader {
 
         Object root = yaml.load(content);
         if (!(root instanceof Map)) {
-            throw new RuntimeException("invalid value");
+            throw new SystemException("invalid value");
         }
 
         Map<String, List<CronDefinition>> cronDefMap = new HashMap<>();
@@ -49,7 +50,7 @@ public class CronDefinitionReader {
     private List<CronDefinition> readList(Object list) {
 
         if (!(list instanceof List)) {
-            throw new RuntimeException("invalid value");
+            throw new SystemException("invalid value");
         }
 
         List<CronDefinition> cronDefItems = new ArrayList<>();
@@ -67,7 +68,7 @@ public class CronDefinitionReader {
     private CronDefinition readCronDefinition(Object value) {
 
         if (!(value instanceof Map)) {
-            throw new RuntimeException("invalid value");
+            throw new SystemException("invalid value");
         }
 
         Map<Object, Object> map = (Map<Object, Object>) value;
@@ -75,11 +76,11 @@ public class CronDefinitionReader {
         Object message = map.get("message");
 
         if (cron == null || StringUtils.isEmpty(cron.toString())) {
-            throw new RuntimeException("TODO");
+            throw new SystemException("cron expression value is empty");
         }
 
         if (message == null || !(message instanceof Map)) {
-            throw new RuntimeException("message is null of not map");
+            throw new SystemException("message is null of not map");
         }
 
         CronDefinition cronDef = new CronDefinition();

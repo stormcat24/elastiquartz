@@ -1,4 +1,4 @@
-package com.github.stormcat24.elastiquartz.task;
+package com.github.stormcat24.elastiquartz.server;
 
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @author stormcat24
  */
 @Component
-public class TaskFactory implements JobFactory {
+public class QuartzJobFactory implements JobFactory {
 
     @Autowired
     private ApplicationContext applicationContext;

@@ -1,5 +1,6 @@
-package com.github.stormcat24.elastiquartz.task;
+package com.github.stormcat24.elastiquartz.quartz;
 
+import com.github.stormcat24.elastiquartz.exception.SystemException;
 import com.github.stormcat24.elastiquartz.publisher.MessagePublisher;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -17,13 +18,14 @@ import java.util.Map;
  */
 @Component
 @Scope("prototype")
-public class MessagePublishTask implements Job {
+public class MessagePublishJob implements Job {
 
     @Autowired
     @Qualifier("messagePublisherFactory")
     private MessagePublisher messagePublisher;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
@@ -32,11 +34,11 @@ public class MessagePublishTask implements Job {
         Object message = dataMap.get("message");
 
         if (target == null || !(target instanceof String)) {
-            throw new RuntimeException(String.format("target is null or invalid structure"));
+            throw new SystemException(String.format("target is null or invalid structure"));
         }
 
         if (message == null || !(message instanceof Map)) {
-            throw new RuntimeException(String.format("message is null or invalid structure"));
+            throw new SystemException(String.format("message is null or invalid structure"));
         }
 
         messagePublisher.publish((String) target, (Map<Object, Object>) message);
