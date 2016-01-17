@@ -102,13 +102,15 @@ elastiquartz:
 
 ### Metrics
 
-Docker container of elastiquartz supports [jolokia](https://jolokia.org/). You can get JVM metrics by HTTP.
+elastiquartz uses spring-boot-actuator. You can get various metrics by HTTP.
+
+http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#production-ready-metrics
  
 e.g.
 
 ```bash
-$ curl http://localhost:8778/jolokia/read/java.lang:type=Memory/NonHeapMemoryUsage
-{"request":{"mbean":"java.lang:type=Memory","attribute":"NonHeapMemoryUsage","type":"read"},"value":{"init":2555904,"committed":53870592,"max":-1,"used":52402136},"timestamp":1439672040,"status":200}
+$ curl http://localhost:8080/metrics
+{"mem":635184,"mem.free":429576,"processors":8,"instance.uptime":12356,"uptime":16756,"systemload.average":2.99853515625,"heap.committed":571392,"heap.init":262144,"heap.used":141815,"heap":3728384,"nonheap.committed":65408,"nonheap.init":2496,"nonheap.used":63793,"nonheap":0,"threads.peak":35,"threads.daemon":18,"threads.totalStarted":39,"threads":35,"classes":8260,"classes.loaded":8260,"classes.unloaded":0,"gc.ps_scavenge.count":6,"gc.ps_scavenge.time":83,"gc.ps_marksweep.count":2,"gc.ps_marksweep.time":120,"httpsessions.max":-1,"httpsessions.active":0,"gauge.response.beans":25.0,"gauge.response.root":33.0,"counter.status.200.root":1,"counter.status.200.beans":1} 
 ```
 
 ### TODO

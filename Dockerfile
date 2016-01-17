@@ -13,10 +13,9 @@ RUN cd /elastiquartz && ./gradlew clean && \
 #jolokia
 COPY jolokia-jvm-1.3.1-agent.jar /usr/local/elastiquartz/lib/
 
-ENV JAVA_OPTS="$JAVA_OPTS -javaagent:/usr/local/elastiquartz/lib/jolokia-jvm-1.3.1-agent.jar=port=8778,host=0.0.0.0"
 ENV CRON_LOCATION_TYPE="s3"
 ENV EVENT_TARGET_TYPE="sqs"
 
-EXPOSE 8080 8778
+EXPOSE 8080
 
 ENTRYPOINT java $JAVA_OPTS -jar /usr/local/elastiquartz/lib/elastiquartz.jar
