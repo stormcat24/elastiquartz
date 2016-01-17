@@ -10,9 +10,6 @@ RUN cd /elastiquartz && ./gradlew clean && \
     rm -rf ~/.gradle && \
     rm -rf /elastiquartz
 
-#jolokia
-COPY jolokia-jvm-1.3.1-agent.jar /usr/local/elastiquartz/lib/
-
 ENV CRON_LOCATION_TYPE="s3"
 ENV EVENT_TARGET_TYPE="sqs"
 
