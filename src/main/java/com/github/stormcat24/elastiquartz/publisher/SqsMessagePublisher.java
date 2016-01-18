@@ -79,7 +79,9 @@ public class SqsMessagePublisher implements MessagePublisher {
         SendMessageRequest request = new SendMessageRequest(sqsUrl, json);
 
         try {
-            sqs.sendMessage(request);
+            SendMessageResult result = sqs.sendMessage(request);
+            logger.info("Sent messsage successfuly. MessageId={}, Message={}, Queue={}",
+                    result.getMessageId(), request.getMessageBody(), request.getQueueUrl());
             healthCheckContext.incrementSuccess();
         } catch (Exception e) {
             healthCheckContext.incrementError();
