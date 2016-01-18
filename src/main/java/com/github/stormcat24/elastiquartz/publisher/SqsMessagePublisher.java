@@ -57,19 +57,14 @@ public class SqsMessagePublisher implements MessagePublisher {
 
     @Override
     public void publish(String target, Map<Object, Object> message) {
-
-        sqs.getQueueUrlAsync(new GetQueueUrlRequest(target), new AsyncHandler<GetQueueUrlRequest, GetQueueUrlResult>() {
-            @Override
-            public void onError(Exception exception) {
-                logger.error("Failed to get queue url. QueueName={}", target);
-                healthCheckContext.incrementError();
-            }
-
-            @Override
-            public void onSuccess(GetQueueUrlRequest request, GetQueueUrlResult getQueueUrlResult) {
-                sendMessage(getQueueUrlResult.getQueueUrl(), message);
-            }
-        });
+        try {
+            GetQueueUrlResult url = sqs.getQueueUrl(new GetQueueUrlRequest(target));
+            sendMessage(url.getQueueUrl(), message);
+            healthCheckContext.incrementSuccess();
+        } catch (Exception e) {
+            healthCheckContext.incrementError();
+            logger.error(String.format("Failed to get queue url. QueueName=%s", target, e));
+        }
     }
 
     private void sendMessage(String sqsUrl, Map<Object, Object> message) {
@@ -82,20 +77,14 @@ public class SqsMessagePublisher implements MessagePublisher {
         }
 
         SendMessageRequest request = new SendMessageRequest(sqsUrl, json);
-        sqs.sendMessageAsync(request, new AsyncHandler<SendMessageRequest, SendMessageResult>() {
-            @Override
-            public void onError(Exception exception) {
-                healthCheckContext.incrementError();
-                logger.error("Failed to send message. MessageBody={}", request.getMessageBody());
-            }
 
-            @Override
-            public void onSuccess(SendMessageRequest request, SendMessageResult sendMessageResult) {
-                healthCheckContext.incrementSuccess();
-                logger.info("Sent messsage successfuly. MessageId={}, Message={}, Queue={}",
-                        sendMessageResult.getMessageId(), request.getMessageBody(), request.getQueueUrl());
-            }
-        });
+        try {
+            sqs.sendMessage(request);
+            healthCheckContext.incrementSuccess();
+        } catch (Exception e) {
+            healthCheckContext.incrementError();
+            logger.error(String.format("Failed to send message. MessageBody=%s", request.getMessageBody(), e));
+        }
     }
 
 }
