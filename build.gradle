@@ -7,6 +7,15 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.gradle.build-scan' version '1.5'
+}
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+}
+
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'spring-boot'
