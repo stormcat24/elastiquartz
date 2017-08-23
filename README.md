@@ -28,6 +28,7 @@ elastiquartz requires several environment variables. This can be easily operated
 |AWS_REGION|us-west-2|your AWS region|
 |AWS_ACCESS_KEY|your_access_key|AWS access key|
 |AWS_SECRET_KEY|your_secret_key|AWS secret key|
+|LOGGING_LEVEL|ERROR|Logging level. default INFO|
 
 ### Cron Definition File(YAML)
 
