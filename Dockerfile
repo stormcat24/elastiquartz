@@ -1,4 +1,4 @@
-FROM java:openjdk-8-jdk-alpine
+FROM java:openjdk-8-jdk-alpine AS build
 
 # build
 COPY . /elastiquartz
@@ -6,13 +6,11 @@ COPY . /elastiquartz
 RUN apk update && \
     apk add --virtual build-dependencies bash && \
     cd /elastiquartz && ./gradlew clean && \
-    cd /elastiquartz && ./gradlew build && \
-    mkdir -p /usr/local/elastiquartz/lib && \
-    cp -R /elastiquartz/build/libs/elastiquartz.jar /usr/local/elastiquartz/lib/ && \
-    rm -rf ~/.gradle && \
-    rm -rf /elastiquartz && \
-    apk del build-dependencies && \
-    rm -rf /var/cache/apk/*
+    cd /elastiquartz && ./gradlew build
+
+FROM java:openjdk-8-jdk-alpine
+RUN mkdir -p /usr/local/elastiquartz/lib/
+COPY --from=build /elastiquartz/build/libs/elastiquartz.jar /usr/local/elastiquartz/lib/
 
 ENV CRON_LOCATION_TYPE="s3"
 ENV EVENT_TARGET_TYPE="sqs"
