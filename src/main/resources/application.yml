@@ -1,4 +1,0 @@
-logging:
-    file: logs/elastiquartz.log
-    level:
-        org.springframework.web: INFO
