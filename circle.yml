@@ -20,7 +20,7 @@ jobs:
   release:
     working_directory: ~/elastiquartz
     docker:
-      - image: openfresh/java:8u111-jdk 
+      - image: java:8u111-jdk
     steps:
       - attach_workspace:
           at: .
